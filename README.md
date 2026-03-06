@@ -1,6 +1,6 @@
-# Datalogic Android SDK — Design Document (v2.4.5)
+# Datalogic Android SDK — Design Document (v2.4.6)
 
-**Last Saved:** 13/01/2025
+**Last Saved:** 06/003/2026
 
 ---
 
@@ -15,6 +15,7 @@
   - [3.5. Bluetooth (HID profile)](#bluetooth-hid-profile)
 - [4. Special setting and limitation](#special-setting-and-limitation)
   - [4.1. Dependencies setting to use Android SDK](#dependencies-setting-to-use-android-sdk)
+  - [4.2. Including the sdk dependencies by Maven repository on GitHub instead of using the local aar file](#including-the-sdk-dependencies-by-maven-repository-on-github-instead-of-using-the-local-aar-file)
   - [4.2. Special setting for Magellan](#special-setting-for-magellan)
   - [4.3. Firmware upgrade and Custom configuration for the old Magellan device](#firmware-upgrade-and-custom-configuration-for-the-old-magellan-device-magellan-1500i-magellan-9800i-magellan-34xx-magellan-35xx)
   - [4.4. Limitation of the reset command with Magellan 9600i and 9900i](#limitation-of-the-reset-command-with-magellan-9600i-and-9900i)
@@ -160,6 +161,34 @@ dependencyResolutionManagement {
 }
 ```
 
+### Including the sdk dependencies by Maven repository on GitHub instead of using the local aar file
+Modify `build.gradle.kts` (application gradle): Add the following lines to your app's dependencies block.
+
+```kotlin
+// ... other dependencies
+implementation("com.datalogic.aladdin:aladdin-sdk:2.4.6")
+```
+
+Modify `settings.gradle.kts`: Ensure the GitHub repository is included in both `pluginManagement` and `dependencyResolutionManagement` blocks.
+
+```kotlin
+pluginManagement {
+  repositories {
+    maven {
+      url = uri("https://datalogic.github.io/datacapture_sdk_repo/")
+    }
+  }
+}
+dependencyResolutionManagement {
+  repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+  repositories {
+    maven {
+      url = uri("https://datalogic.github.io/datacapture_sdk_repo/")
+    }
+  }
+}
+```
+
 ### Special setting for Magellan
 
 | Device | Setting |
@@ -300,9 +329,9 @@ Class represents for Datalogic Scanner. It contains the Datalogic Scanner detail
 | `Boolean isScaleAvailable()` | Check if this device is supported scale or not |
 | `String getCustomConfiguration()` | Get all current configurations on device |
 | `ConfigurationResult writeCustomConfiguration(configStr: String)` | Write all configurations in configStr into device |
-| `Boolean upgradeFirmware( file: File,  fileType: String,  context: Context,  resetCallback: () -> Unit,  progressCallback: (Int) -> Unit,  isBulkTransfer: Boolean,  onFailure: (String) -> Unit, onComplete: () -> Unit )` | Function to upgrade firmware for device. `file`: Path to firmware file on local folder. `fileType`: can be “DFW”, “SWU”, “S37”. `isBulkTransfer`: set to “true” to use Bulk Transfer protocol to speed up firmware upgrade. Only support “S37” on Magellan 9600i, 900i, 9550i. The `upgradeFirmware()` function actually contains the `loadFirmwareFile()` and `upgradeLoadedFirmware()` function |
+| `Boolean upgradeFirmware( file: File,  fileType: String,  context: Context,  resetCallback: () -> Unit,  progressCallback: (Int) -> Unit,  isBulkTransfer: Boolean,  onFailure: (String) -> Unit, onComplete: () -> Unit, isUpgradeBoot: Boolean )` | Function to upgrade firmware for device. `file`: Path to firmware file on local folder. `fileType`: can be “DFW”, “SWU”, “S37”. `isBulkTransfer`: set to “true” to use Bulk Transfer protocol to speed up firmware upgrade. Only support “S37” on Magellan 9600i, 900i, 9550i. `isUpgradeBoot`: set to “true” to upgrade the boot block of device, this setting is only available for the dfw FW file. upgrading the incorrect boot can crash the device, please use this setting carefully. Only support “S37” on Magellan 9600i, 900i, 9550i. The `upgradeFirmware()` function actually contains the `loadFirmwareFile()` and `upgradeLoadedFirmware()` function |
 | `Void loadFirmwareFile( file: File,  fileType: String,  context: Context,  onCompleteLoadFirmware: () -> Unit,  progressCallback: (Int) -> Unit )` | Function to load the firmware file into sdk. It is usually used with the firmware file .dfw because the big size .dfw file will spend a long time to be loaded into sdk. |
-| `Boolean upgradeLoadedFirmware( resetCallback: () -> Unit,  progressCallback: (Int) -> Unit,  isBulkTransfer: Boolean,  onFailure: (String) -> Unit, onComplete: () -> Unit )` | Function to upgrade the loaded firmware which had been loaded by the `loadFirmwareFile ()` function |
+| `Boolean upgradeLoadedFirmware( resetCallback: () -> Unit,  progressCallback: (Int) -> Unit,  isBulkTransfer: Boolean,  onFailure: (String) -> Unit, onComplete: () -> Unit, isUpgradeBoot: Boolean )` | Function to upgrade the loaded firmware which had been loaded by the `loadFirmwareFile ()` function. `isUpgradeBoot`: set to “true” to upgrade the boot block of device, this setting is only available for the dfw FW file. upgrading the incorrect boot can crash the device, please use this setting carefully |
 | `Boolean isSupportCheckDocking()` | Check if this device can notify the docking status |
 | `Void startAutoCheckDocking()` | Start automatically checking the docking status and notify through the `onDockListener` function |
 | `Void stopAutoCheckDocking()` | Stop automatically checking the docking status and notify through the `onDockListener` function |
