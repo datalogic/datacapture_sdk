@@ -19,7 +19,7 @@
   - [4.2. Special setting for Magellan](#special-setting-for-magellan)
   - [4.3. Firmware upgrade and Custom configuration for the old Magellan device](#firmware-upgrade-and-custom-configuration-for-the-old-magellan-device-magellan-1500i-magellan-9800i-magellan-34xx-magellan-35xx)
   - [4.4. Limitation of the reset command with Magellan 9600i and 9900i](#limitation-of-the-reset-command-with-magellan-9600i-and-9900i)
-  - [4.5. Product Details JSON — External File Override](#45-product-details-json--external-file-override)
+  - [4.5. Product Details JSON — External File Override](#product-details-json--external-file-override)
 - [5. Interfaces](#interfaces)
   - [5.1. UsbListener](#usblistener)
   - [5.2. UsbScanListener](#usbscanlistener)
