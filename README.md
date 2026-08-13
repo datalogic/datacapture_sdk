@@ -1,6 +1,6 @@
-# Datalogic Android SDK — Design Document (v2.4.8)
+# Datalogic Android SDK — Design Document (v2.4.9)
 
-**Last Saved:** 18/06/2026
+**Last Saved:** 13/08/2026
 
 ---
 
